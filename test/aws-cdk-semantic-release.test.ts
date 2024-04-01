@@ -1,17 +1,22 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Template } from 'aws-cdk-lib/assertions';
-// import * as AwsCdkSemanticRelease from '../lib/aws-cdk-semantic-release-stack';
+import * as cdk from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
+import { AwsCdkSemanticReleaseStack } from '../lib/aws-cdk-semantic-release-stack';
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/aws-cdk-semantic-release-stack.ts
-test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//     // WHEN
-//   const stack = new AwsCdkSemanticRelease.AwsCdkSemanticReleaseStack(app, 'MyTestStack');
-//     // THEN
-//   const template = Template.fromStack(stack);
+describe('AwsCdkSemanticReleaseStack', () => {
+    const app = new cdk.App()
+    const stack = new AwsCdkSemanticReleaseStack(app, 'TestStack')
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
-});
+    it('should create an SQS queue with the provided visibility timeout', () => {
+        const template = Template.fromStack(stack)
+        template.resourceCountIs('AWS::SQS::Queue', 1)
+        
+        template.hasResourceProperties('AWS::SQS::Queue', {
+            VisibilityTimeout: 300,
+        })
+    })
+
+    it('should match the snapshot', () => {
+        const template = Template.fromStack(stack)
+        expect(template.toJSON()).toMatchSnapshot()
+    })
+})
